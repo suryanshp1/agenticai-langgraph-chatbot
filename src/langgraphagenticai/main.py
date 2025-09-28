@@ -1,5 +1,6 @@
 import streamlit as st
 import json
+import os
 from src.langgraphagenticai.ui.streamlitui.loadui import LoadStreamlitUI
 from src.langgraphagenticai.llms.groqllm import GroqLLM
 from src.langgraphagenticai.graph.graph_builder import GraphBuilder
@@ -38,6 +39,15 @@ def load_langgraph_agenticai_app():
             if not usecase:
                 st.error("Error: no usecase selected")
                 return
+
+            # Set TAVILY API key if needed for tool-based usecases
+            if usecase in ["Chatbot with Tool", "AI News"]:
+                tavily_key = user_input.get("TAVILY_API_KEY")
+                if tavily_key:
+                    os.environ["TAVILY_API_KEY"] = tavily_key
+                else:
+                    st.error("TAVILY API key is required for this usecase")
+                    return
 
             # Graph Builder
             graph_builder = GraphBuilder(model)

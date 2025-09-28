@@ -11,9 +11,8 @@ pinned: false
 short_description: agenticai
 license: mit
 ---
-# Welcome to Streamlit!
 
-Edit `/src/streamlit_app.py` to customize this app to your heart's desire. :heart:
+### END TO END AGENTIC AI APPLICATION
 
-If you have any questions, checkout our [documentation](https://docs.streamlit.io) and [community
-forums](https://discuss.streamlit.io).
+- Add support for memory, tools and MCP in it
+- Add guardrail and lanfuse support

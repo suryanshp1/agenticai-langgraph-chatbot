@@ -1,5 +1,5 @@
 import streamlit as st
-from langchain_core.messages import HumanMessage, AIMessage
+from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
 import json
 
 class DisplayResultStremlit:
@@ -21,3 +21,35 @@ class DisplayResultStremlit:
                         st.write(user_message)
                     with st.chat_message("assisstant"):
                         st.write(value["messages"].content)
+
+        elif usecase == "Chatbot with Tool" or usecase == "AI News":
+            # Prepare state and invoke the graph
+            initial_state = {"messages": [HumanMessage(content=user_message)]}
+            
+            # Display user message
+            with st.chat_message("user"):
+                st.write(user_message)
+            
+            # Stream the graph execution
+            for event in graph.stream(initial_state):
+                for node_name, node_output in event.items():
+                    if "messages" in node_output:
+                        messages = node_output["messages"]
+                        if not isinstance(messages, list):
+                            messages = [messages]
+                        
+                        for message in messages:
+                            if isinstance(message, ToolMessage):
+                                with st.chat_message("assistant"):
+                                    st.write("🔍 **Tool Search Results:**")
+                                    st.write(message.content)
+                            elif isinstance(message, AIMessage):
+                                if message.tool_calls:
+                                    with st.chat_message("assistant"):
+                                        st.write("🔧 **Calling search tool...**")
+                                        for tool_call in message.tool_calls:
+                                            st.write(f"Searching for: {tool_call['args'].get('query', 'N/A')}")
+                                else:
+                                    with st.chat_message("assistant"):
+                                        st.write(message.content)
+                

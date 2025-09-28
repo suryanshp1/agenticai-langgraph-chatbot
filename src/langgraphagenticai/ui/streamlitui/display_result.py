@@ -1,6 +1,7 @@
 import streamlit as st
 from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
 import json
+from src.langgraphagenticai.monitoring.dashboard import log_user_interaction, show_cost_tracking
 
 class DisplayResultStremlit:
     def __init__(self, usecase, graph, user_message):
@@ -21,8 +22,18 @@ class DisplayResultStremlit:
                         st.write(user_message)
                     with st.chat_message("assisstant"):
                         st.write(value["messages"].content)
+                        
+                        # Log interaction for monitoring - fail silently if monitoring unavailable
+                        try:
+                            log_user_interaction(
+                                usecase=usecase,
+                                user_message=user_message,
+                                response=value["messages"].content
+                            )
+                        except Exception:
+                            pass
 
-        elif usecase == "Chatbot with Tool" or usecase == "AI News":
+        elif usecase == "Chatbot with Tool" or usecase == "AI News" or usecase == "MCP Chatbot":
             # Prepare state and invoke the graph
             initial_state = {"messages": [HumanMessage(content=user_message)]}
             
@@ -41,15 +52,38 @@ class DisplayResultStremlit:
                         for message in messages:
                             if isinstance(message, ToolMessage):
                                 with st.chat_message("assistant"):
-                                    st.write("🔍 **Tool Search Results:**")
+                                    if usecase == "MCP Chatbot":
+                                        st.write("🔧 **MCP Tool Results:**")
+                                    else:
+                                        st.write("🔍 **Tool Search Results:**")
                                     st.write(message.content)
                             elif isinstance(message, AIMessage):
                                 if message.tool_calls:
                                     with st.chat_message("assistant"):
-                                        st.write("🔧 **Calling search tool...**")
+                                        if usecase == "MCP Chatbot":
+                                            st.write("🚀 **Calling MCP tool...**")
+                                        else:
+                                            st.write("🔧 **Calling search tool...**")
                                         for tool_call in message.tool_calls:
-                                            st.write(f"Searching for: {tool_call['args'].get('query', 'N/A')}")
+                                            st.write(f"Tool: {tool_call.get('name', 'Unknown')}")
+                                            st.write(f"Query: {tool_call['args'].get('query', 'N/A')}")
                                 else:
                                     with st.chat_message("assistant"):
                                         st.write(message.content)
+                                        
+                                        # Log interaction for monitoring - fail silently if monitoring unavailable
+                                        try:
+                                            log_user_interaction(
+                                                usecase=usecase,
+                                                user_message=user_message,
+                                                response=message.content
+                                            )
+                                        except Exception:
+                                            pass
+            
+            # Show cost tracking info - fail silently if monitoring unavailable
+            try:
+                show_cost_tracking()
+            except Exception:
+                pass
                 

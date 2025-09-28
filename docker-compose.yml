@@ -1,6 +1,46 @@
 version: '3.8'
 
 services:
+  # Langfuse Database
+  langfuse-db:
+    image: postgres:15
+    container_name: langfuse-postgres
+    environment:
+      POSTGRES_DB: langfuse
+      POSTGRES_USER: langfuse
+      POSTGRES_PASSWORD: langfuse_password
+    volumes:
+      - langfuse_db_data:/var/lib/postgresql/data
+    networks:
+      - langgraph-network
+    restart: unless-stopped
+
+  # Langfuse Server
+  langfuse-server:
+    image: langfuse/langfuse:2
+    container_name: langfuse-server
+    depends_on:
+      - langfuse-db
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://langfuse:langfuse_password@langfuse-db:5432/langfuse
+      NEXTAUTH_SECRET: mysecret
+      SALT: mysalt
+      NEXTAUTH_URL: http://localhost:3000
+      TELEMETRY_ENABLED: ${TELEMETRY_ENABLED:-true}
+      LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES: ${LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES:-false}
+    networks:
+      - langgraph-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:3000/api/public/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Main Application
   langgraph-agenticai:
     build:
       context: .
@@ -11,6 +51,10 @@ services:
     environment:
       - GROQ_API_KEY=${GROQ_API_KEY}
       - TAVILY_API_KEY=${TAVILY_API_KEY}
+      - LANGFUSE_SECRET_KEY=${LANGFUSE_SECRET_KEY:-}
+      - LANGFUSE_PUBLIC_KEY=${LANGFUSE_PUBLIC_KEY:-}
+      - LANGFUSE_HOST=${LANGFUSE_HOST:-http://langfuse-server:3000}
+      - STREAMLIT_ENV=${STREAMLIT_ENV:-development}
     volumes:
       - ./src:/app/src
       - ./app.py:/app/app.py
@@ -23,6 +67,9 @@ services:
       start_period: 40s
     networks:
       - langgraph-network
+
+volumes:
+  langfuse_db_data:
 
 networks:
   langgraph-network:

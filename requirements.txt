@@ -6,3 +6,6 @@ langchain_groq==0.3.8
 langchain_openai==0.3.33
 faiss-cpu==1.12.0
 streamlit==1.49.1
+langchain-mcp-adapters
+mcp
+langfuse

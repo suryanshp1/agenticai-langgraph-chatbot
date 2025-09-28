@@ -5,6 +5,11 @@ from src.langgraphagenticai.ui.streamlitui.loadui import LoadStreamlitUI
 from src.langgraphagenticai.llms.groqllm import GroqLLM
 from src.langgraphagenticai.graph.graph_builder import GraphBuilder
 from src.langgraphagenticai.ui.streamlitui.display_result import DisplayResultStremlit
+# Import monitoring - but don't fail if it's not available
+try:
+    from src.langgraphagenticai.monitoring.langfuse_integration import langfuse_manager
+except ImportError:
+    langfuse_manager = None
 
 
 # Main function START
@@ -53,7 +58,15 @@ def load_langgraph_agenticai_app():
             graph_builder = GraphBuilder(model)
 
             try:
-                graph = graph_builder.setup_graph(usecase=usecase)
+                # Pass MCP config if it's an MCP usecase
+                if usecase == "MCP Chatbot":
+                    mcp_config = user_input.get("mcp_config")
+                    if not mcp_config:
+                        st.error("MCP configuration is required for MCP Chatbot")
+                        return
+                    graph = graph_builder.setup_graph(usecase=usecase, mcp_config=mcp_config)
+                else:
+                    graph = graph_builder.setup_graph(usecase=usecase)
                 DisplayResultStremlit(
                     usecase, graph, user_message
                 ).display_result_on_ui()

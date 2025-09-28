@@ -1,6 +1,7 @@
 import os
 import streamlit as st
 from langchain_groq import ChatGroq
+from src.langgraphagenticai.monitoring.langfuse_integration import create_monitored_llm, get_langfuse_callbacks
 
 
 class GroqLLM:
@@ -16,8 +17,24 @@ class GroqLLM:
                 st.error("Please enter the GROQ API key and select a model")
                 return None
 
-            llm = ChatGroq(api_key=groq_api_key, model=selected_groq_model)
-            return llm
+            # Create base LLM first (without monitoring)
+            llm = ChatGroq(
+                api_key=groq_api_key, 
+                model=selected_groq_model
+            )
+            
+            # Try to add monitoring, but don't fail if it doesn't work
+            try:
+                callbacks = get_langfuse_callbacks()
+                if callbacks:
+                    llm.callbacks = callbacks
+                
+                # Wrap with Langfuse monitoring
+                monitored_llm = create_monitored_llm(llm)
+                return monitored_llm
+            except Exception:
+                # If monitoring fails, return the base LLM
+                return llm
         except Exception as e:
             st.error(f"Error initializing ChatGroq: {str(e)}")
             print(str(e))

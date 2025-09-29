@@ -9,3 +9,5 @@ streamlit==1.49.1
 langchain-mcp-adapters
 mcp
 langfuse
+guardrails-ai==0.5.10
+pydantic==2.5.0

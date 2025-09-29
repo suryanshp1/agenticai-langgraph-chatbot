@@ -31,16 +31,18 @@ def load_langgraph_agenticai_app():
 
     if user_message:
         try:
-            # Configure LLM
+            # Get usecase first
+            usecase = user_input.get("selected_usecase", "general")
+            
+            # Configure LLM with usecase for appropriate guardrails
             obj_llm_config = GroqLLM(user_controls_input=user_input)
-            model = obj_llm_config.get_llm_model()
+            model = obj_llm_config.get_llm_model(usecase=usecase)
 
             if not model:
                 st.error("Error: LLM model could not be initialized")
                 return
 
-            # initialize and setup graph based on usecase
-            usecase = user_input.get("selected_usecase")
+            # Validate usecase
             if not usecase:
                 st.error("Error: no usecase selected")
                 return

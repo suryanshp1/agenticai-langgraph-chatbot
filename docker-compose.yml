@@ -55,6 +55,7 @@ services:
       - LANGFUSE_PUBLIC_KEY=${LANGFUSE_PUBLIC_KEY:-}
       - LANGFUSE_HOST=${LANGFUSE_HOST:-http://langfuse-server:3000}
       - STREAMLIT_ENV=${STREAMLIT_ENV:-development}
+      - GUARDRAILS_ENABLED=${GUARDRAILS_ENABLED:-true}
     volumes:
       - ./src:/app/src
       - ./app.py:/app/app.py

@@ -42,15 +42,31 @@ class LoadStreamlitUI:
         
 
         with st.sidebar:
+            # Safety and Monitoring Status
+            st.subheader("🛡️ Safety & Monitoring")
+            
+            # Guardrails status
+            try:
+                from src.langgraphagenticai.guardrails.validation_service import validation_service
+                if validation_service.config.is_enabled():
+                    st.success("🛡️ Guardrails: ON")
+                    stats = validation_service.get_validation_stats()
+                    if stats.get("total_guards", 0) > 0:
+                        st.caption(f"Active guards: {stats['total_guards']}")
+                else:
+                    st.info("🛡️ Guardrails: OFF")
+            except Exception:
+                pass
+            
             # Langfuse monitoring status - fail silently if monitoring unavailable
             try:
                 from src.langgraphagenticai.monitoring.langfuse_integration import langfuse_manager
                 if langfuse_manager.is_enabled():
-                    st.success("📊 Langfuse Monitoring: ON")
+                    st.success("📊 Monitoring: ON")
                     dashboard_url = langfuse_manager.get_dashboard_url()
                     st.markdown(f"[📈 View Dashboard]({dashboard_url})")
                 else:
-                    st.info("📊 Langfuse Monitoring: OFF")
+                    st.info("📊 Monitoring: OFF")
             except Exception:
                 # If monitoring status can't be determined, don't show anything
                 pass

@@ -81,9 +81,19 @@ class DisplayResultStremlit:
                                         except Exception:
                                             pass
             
-            # Show cost tracking info - fail silently if monitoring unavailable
+            # Show safety and monitoring info
             try:
                 show_cost_tracking()
+                self._show_safety_info()
             except Exception:
                 pass
+    
+    def _show_safety_info(self):
+        """Show safety information"""
+        try:
+            from src.langgraphagenticai.guardrails.validation_service import validation_service
+            if validation_service.config.is_enabled():
+                st.info("🛡️ This conversation is protected by Guardrails AI for safety and quality.")
+        except Exception:
+            pass
                 

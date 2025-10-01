@@ -47,7 +47,7 @@ class LoadStreamlitUI:
             
             # Guardrails status
             try:
-                from src.langgraphagenticai.guardrails.validation_service import validation_service
+                from src.langgraphagenticai.guardrail.validation_service import validation_service
                 if validation_service.config.is_enabled():
                     st.success("🛡️ Guardrails: ON")
                     stats = validation_service.get_validation_stats()

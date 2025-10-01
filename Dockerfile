@@ -18,4 +18,7 @@ EXPOSE 8501
 
 HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
 
+# RUN guardrails configure && \
+#     guardrails hub install hub://guardrails/toxic_language
+
 ENTRYPOINT ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]

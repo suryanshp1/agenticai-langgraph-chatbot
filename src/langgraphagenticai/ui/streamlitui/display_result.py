@@ -91,7 +91,7 @@ class DisplayResultStremlit:
     def _show_safety_info(self):
         """Show safety information"""
         try:
-            from src.langgraphagenticai.guardrails.validation_service import validation_service
+            from src.langgraphagenticai.guardrail.validation_service import validation_service
             if validation_service.config.is_enabled():
                 st.info("🛡️ This conversation is protected by Guardrails AI for safety and quality.")
         except Exception:

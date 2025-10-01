@@ -2,7 +2,7 @@ import os
 import streamlit as st
 from langchain_groq import ChatGroq
 from src.langgraphagenticai.monitoring.langfuse_integration import create_monitored_llm, get_langfuse_callbacks
-from src.langgraphagenticai.guardrails.llm_wrapper import create_guardrails_llm
+from src.langgraphagenticai.guardrail.llm_wrapper import create_guardrails_llm
 
 
 class GroqLLM:

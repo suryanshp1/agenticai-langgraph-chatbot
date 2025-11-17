@@ -2,7 +2,7 @@
 Guardrails LLM Wrapper
 Wraps LLM calls with input/output validation
 """
-from typing import Any, List, Optional, Dict
+from typing import Any, List, Optional
 from langchain_core.language_models.base import BaseLanguageModel
 from langchain_core.messages import BaseMessage, AIMessage, HumanMessage
 from langchain_core.callbacks import CallbackManagerForLLMRun

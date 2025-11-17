@@ -3,12 +3,7 @@ import streamlit as st
 from langchain_groq import ChatGroq
 from src.langgraphagenticai.monitoring.langfuse_integration import create_monitored_llm, get_langfuse_callbacks
 from src.langgraphagenticai.guardrail.llm_wrapper import create_guardrails_llm
-# Optional Memori integration to reduce token usage by storing/retrieving
-# short conversation summaries and relevant memories.
-try:
-    from src.langgraphagenticai.memori_integration import wrap_llm_with_memori
-except Exception:
-    wrap_llm_with_memori = None
+from src.langgraphagenticai.memori_integration import wrap_llm_with_memori
 
 
 class GroqLLM:

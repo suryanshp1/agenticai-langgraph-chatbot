@@ -23,10 +23,6 @@ class LangfuseManager:
             secret_key = os.getenv("LANGFUSE_SECRET_KEY")
             public_key = os.getenv("LANGFUSE_PUBLIC_KEY")
             host = os.getenv("LANGFUSE_HOST", "http://localhost:3000")
-
-            print(f"Langfuse Host:------------------- {host}")
-            print(f"Langfuse Secret Key:--------- {secret_key}")
-            print(f"Langfuse Public Key:---------- {public_key}")
             
             if not secret_key or not public_key:
                 # Silently disable monitoring if keys are not provided
@@ -46,18 +42,6 @@ class LangfuseManager:
                 host=host,
             )
             
-            # Test connection with timeout
-            try:
-                self.langfuse.auth_check()
-                # Only show success message if in development mode
-                if os.getenv("STREAMLIT_ENV") != "production":
-                    st.success("✅ Langfuse monitoring enabled")
-            except Exception as auth_error:
-                # Connection test failed, disable monitoring
-                self.langfuse = None
-                self.callback_handler = None
-                if os.getenv("STREAMLIT_ENV") != "production":
-                    st.warning(f"⚠️ Langfuse connection failed: {auth_error}. Monitoring disabled.")
                 
         except Exception as e:
             # Any initialization error should not break the app

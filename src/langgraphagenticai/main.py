@@ -5,11 +5,6 @@ from src.langgraphagenticai.ui.streamlitui.loadui import LoadStreamlitUI
 from src.langgraphagenticai.llms.groqllm import GroqLLM
 from src.langgraphagenticai.graph.graph_builder import GraphBuilder
 from src.langgraphagenticai.ui.streamlitui.display_result import DisplayResultStremlit
-# Import monitoring - but don't fail if it's not available
-try:
-    from src.langgraphagenticai.monitoring.langfuse_integration import langfuse_manager
-except ImportError:
-    langfuse_manager = None
 
 
 # Main function START

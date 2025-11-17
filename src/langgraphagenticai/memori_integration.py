@@ -18,16 +18,8 @@ Usage:
 """
 from typing import Any, List, Optional
 import os
-
-try:
-    from memori import Memori, create_memory_tool
-    from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
-except Exception:  # pragma: no cover - safe fallback when Memori not installed
-    Memori = None
-    create_memory_tool = None
-    SystemMessage = None
-    HumanMessage = None
-    AIMessage = None
+from memori import Memori, create_memory_tool
+from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 
 
 class MemoryDisabledException(Exception):

@@ -2,7 +2,7 @@
 Langfuse Integration for LLM Monitoring and Cost Tracking
 """
 import os
-from typing import Optional, Dict, Any
+from typing import Optional, Any
 import streamlit as st
 from langfuse import Langfuse
 from langfuse.langchain import CallbackHandler
@@ -23,6 +23,10 @@ class LangfuseManager:
             secret_key = os.getenv("LANGFUSE_SECRET_KEY")
             public_key = os.getenv("LANGFUSE_PUBLIC_KEY")
             host = os.getenv("LANGFUSE_HOST", "http://localhost:3000")
+
+            print(f"Langfuse Host:------------------- {host}")
+            print(f"Langfuse Secret Key:--------- {secret_key}")
+            print(f"Langfuse Public Key:---------- {public_key}")
             
             if not secret_key or not public_key:
                 # Silently disable monitoring if keys are not provided
@@ -33,7 +37,6 @@ class LangfuseManager:
                 secret_key=secret_key,
                 public_key=public_key,
                 host=host,
-                timeout=5  # 5 second timeout
             )
             
             # Create callback handler for LangChain integration
@@ -41,7 +44,6 @@ class LangfuseManager:
                 secret_key=secret_key,
                 public_key=public_key,
                 host=host,
-                timeout=5
             )
             
             # Test connection with timeout

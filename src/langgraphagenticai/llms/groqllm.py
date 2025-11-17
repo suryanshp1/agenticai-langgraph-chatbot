@@ -3,6 +3,12 @@ import streamlit as st
 from langchain_groq import ChatGroq
 from src.langgraphagenticai.monitoring.langfuse_integration import create_monitored_llm, get_langfuse_callbacks
 from src.langgraphagenticai.guardrail.llm_wrapper import create_guardrails_llm
+# Optional Memori integration to reduce token usage by storing/retrieving
+# short conversation summaries and relevant memories.
+try:
+    from src.langgraphagenticai.memori_integration import wrap_llm_with_memori
+except Exception:
+    wrap_llm_with_memori = None
 
 
 class GroqLLM:
@@ -37,6 +43,14 @@ class GroqLLM:
                 if callbacks:
                     llm.callbacks = callbacks
                 
+                # Optionally wrap LLM with Memori (to reduce token usage) before monitoring
+                try:
+                    if wrap_llm_with_memori is not None:
+                        llm = wrap_llm_with_memori(llm)
+                except Exception:
+                    # If Memori wrapping fails, continue without it
+                    pass
+
                 # Wrap with Langfuse monitoring
                 monitored_llm = create_monitored_llm(llm)
                 return monitored_llm

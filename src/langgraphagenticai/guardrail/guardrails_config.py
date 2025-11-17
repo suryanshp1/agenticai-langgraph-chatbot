@@ -3,11 +3,11 @@ Guardrails Configuration and Management
 Handles safety and validation for LLM inputs and outputs
 """
 import os
-from typing import Dict, Any, Optional, List
+from typing import Optional
 import streamlit as st
 from guardrails import Guard
-from guardrails.hub import ToxicLanguage, ProfanityFree, ReadingTime, SensitiveTopics
-from guardrails.validators import ValidLength, ValidChoices
+from guardrails.hub import ToxicLanguage, ProfanityFree, ReadingTime, SensitiveTopic
+from guardrails.hub import ValidLength
 from pydantic import BaseModel, Field
 
 
@@ -72,7 +72,7 @@ class GuardrailsConfig:
                 "illegal_activities", "self_harm"
             ]
             return Guard().use(
-                SensitiveTopics(sensitive_topics=sensitive_topics, threshold=0.8),
+                SensitiveTopic(sensitive_topics=sensitive_topics, threshold=0.8),
                 ToxicLanguage(threshold=0.7, validation_method="full")
             )
         except Exception:

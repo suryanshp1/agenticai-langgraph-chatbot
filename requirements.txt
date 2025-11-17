@@ -10,3 +10,5 @@ langchain-mcp-adapters
 mcp==1.15.0
 langfuse==3.5.2
 guardrails-ai==0.6.7
+memorisdk==2.3.2
+python-dotenv==1.2.1
